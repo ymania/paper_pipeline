@@ -1,0 +1,7 @@
+{
+  "wall": "IfcWall",
+  "window": "IfcWindow",
+  "door": "IfcDoor",
+  "floor": "IfcSlab",
+  "ceiling": "IfcSlab"
+}

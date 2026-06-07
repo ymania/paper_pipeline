@@ -1,0 +1,26 @@
+{
+  "projection": {
+    "margin_pixels": 5,
+    "min_visibility": 1
+  },
+  "voting": {
+    "normal_k": 10,
+    "distance_alpha": 1.0,
+    "smooth_k": 10,
+    "smooth_threshold": 0.5
+  },
+  "clustering": {
+    "eps": 2.0,
+    "min_samples": 10
+  },
+  "ifc_export": {
+    "default_confidence": 0.85,
+    "source_tag": "Photogrammetry"
+  },
+  "coordinate_transform": {
+    "scale_factor": 1.0,
+    "flip_z": true,
+    "auto_center_xy": true,
+    "auto_floor_z": true
+  }
+}

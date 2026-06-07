@@ -1,0 +1,14 @@
+# 论文复现依赖
+# "基于多视图融合的稀疏语义点云生成与BIM轻量化表达"
+
+numpy>=1.21
+scikit-learn>=1.0
+torch>=2.0
+transformers>=4.30
+Pillow>=9.0
+tqdm>=4.60
+ifcopenshell>=0.7
+plotly>=5.0
+
+# 可选: 用于 GPU 加速
+# timm  # SegFormer 可能需要的依赖

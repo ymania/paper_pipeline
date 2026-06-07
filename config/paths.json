@@ -1,0 +1,7 @@
+{
+  "data_root": "/home/qmyyc/my_workplace/语义管道/project/data/",
+  "output_root": "output/",
+  "colmap_output": "colmap_output/sparse/0",
+  "images_dir": "images",
+  "image_extensions": [".jpg", ".jpeg", ".JPG", ".png"]
+}
