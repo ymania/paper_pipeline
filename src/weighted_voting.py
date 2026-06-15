@@ -155,7 +155,7 @@ def weighted_vote(
 
         labels[idx] = best_class
         confidences[idx] = confidence
-        vote_counts[idx] = len(votes)
+        vote_counts[idx] = len(cam_indices)  # 可见视图数（非唯一种类数）
 
         processed += 1
         if processed % 5000 == 0:
@@ -168,5 +168,26 @@ def weighted_vote(
     if valid.sum() > 0:
         logger.info(f"平均置信度: {confidences[valid].mean():.4f}")
         logger.info(f"唯一标签数: {len(np.unique(labels[valid]))}")
+
+    # 多视图统计 — 按可见视图数量分层分析
+    multi_view_mask = vote_counts > 1
+    single_view_mask = vote_counts == 1
+    n_single = single_view_mask.sum()
+    n_multi = multi_view_mask.sum()
+    
+    # 视图数分布
+    if n_multi > 0:
+        multi_confs = confidences[multi_view_mask]
+        n_disagree = (multi_confs < 0.99).sum()
+        logger.info(f"多视图分析: 单视图={n_single}点, 多视图={n_multi}点")
+        logger.info(f"  视图数分布: 2视图={(vote_counts==2).sum()}, 3视图={(vote_counts==3).sum()}, 4+视图={(vote_counts>=4).sum()}")
+        logger.info(f"  多视图中有标签分歧: {n_disagree}点 ({n_disagree/n_multi*100:.1f}%)")
+        if n_disagree > 0:
+            logger.info(f"  分歧点平均置信度: {multi_confs[multi_confs < 0.99].mean():.4f}")
+            logger.info(f"  分歧点置信度中位数: {np.median(multi_confs[multi_confs < 0.99]):.4f}")
+        logger.info(f"  多视图点平均置信度: {multi_confs.mean():.4f}")
+    else:
+        logger.info(f"多视图分析: 所有标记点均仅从1个视角可见")
+        logger.info(f"  注: COLMAP稀疏重建中track长度偏短是正常现象")
 
     return labels, confidences

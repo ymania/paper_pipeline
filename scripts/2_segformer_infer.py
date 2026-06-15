@@ -64,6 +64,14 @@ ADE20K_CLASSES = {
 
 
 def main():
+    import argparse
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--model', choices=['b0', 'b5'], default='b0',
+                        help='SegFormer variant (default: b0)')
+    parser.add_argument('--image-ids', nargs='+', type=int, default=None,
+                        help='只处理指定图像ID (debug用)')
+    args = parser.parse_args()
+
     config_path = Path(__file__).parent.parent / 'config' / 'paths.json'
     with open(config_path, 'r') as f:
         config = json.load(f)
@@ -72,7 +80,7 @@ def main():
     images_dir = data_dir / config['images_dir']
     output_dir = Path(config['output_root'])
     intermediate = output_dir / 'intermediate'
-    semantic_dir = intermediate / 'semantic_maps'
+    semantic_dir = intermediate / f'semantic_maps_{args.model}'
     semantic_dir.mkdir(parents=True, exist_ok=True)
 
     # 加载 images.pkl 获取图像列表
@@ -93,20 +101,29 @@ def main():
     import torch
     from transformers import AutoModelForSemanticSegmentation
 
-    MODEL_NAME = "nvidia/segformer-b0-finetuned-ade-512-512"
+    if args.model == 'b5':
+        MODEL_NAME = "nvidia/segformer-b5-finetuned-ade-640-640"
+        INPUT_SIZE = 640
+    else:
+        MODEL_NAME = "nvidia/segformer-b0-finetuned-ade-512-512"
+        INPUT_SIZE = 512
+        
     device = "cuda" if torch.cuda.is_available() else "cpu"
     
-    logger.info(f"加载模型: {MODEL_NAME} (device={device})")
+    logger.info(f"加载模型: {MODEL_NAME} (device={device}, input={INPUT_SIZE}×{INPUT_SIZE})")
     model = AutoModelForSemanticSegmentation.from_pretrained(MODEL_NAME).to(device)
     model.eval()
 
-    # 逐张分割
-    for img_id, img_path in tqdm(sorted(image_files.items()), desc="SegFormer 推理"):
+    # 逐张分割 (如果指定了 image_ids 则只处理那些)
+    target_ids = set(args.image_ids) if args.image_ids else set(image_files.keys())
+    for img_id, img_path in tqdm(sorted(image_files.items()), desc=f"SegFormer B{args.model.upper()} 推理"):
+        if img_id not in target_ids:
+            continue
         image = Image.open(img_path).convert('RGB')
         orig_w, orig_h = image.size
         
         # 手动预处理绕过 torch.from_numpy bug (torch 2.8 + numpy 1.25)
-        image_resized = image.resize((512, 512), Image.BILINEAR)
+        image_resized = image.resize((INPUT_SIZE, INPUT_SIZE), Image.BILINEAR)
         img_array = np.array(image_resized, dtype=np.float32) / 255.0
         img_array = (img_array - np.array([0.485, 0.456, 0.406])) / np.array([0.229, 0.224, 0.225])
         img_array = img_array.transpose(2, 0, 1)  # HWC -> CHW

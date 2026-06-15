@@ -32,9 +32,14 @@ logger = logging.getLogger(__name__)
 
 
 def main():
+    import argparse
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--model', choices=['b0', 'b5'], default='b0',
+                        help='使用哪个模型的语义分割结果')
+    args_extra = parser.parse_args()
+
     project_root = Path(__file__).resolve().parent.parent
 
-    # 加载配置
     with open(project_root / 'config' / 'pipeline_params.json', 'r') as f:
         params = json.load(f)
 
@@ -56,7 +61,7 @@ def main():
         images = pickle.load(f)
 
     # 加载语义分割结果
-    semantic_dir = intermediate / 'semantic_maps'
+    semantic_dir = intermediate / f'semantic_maps_{args_extra.model}'
     semantic_maps = []
     image_id_to_index = {}
 

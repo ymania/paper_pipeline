@@ -5,7 +5,7 @@
   },
   "voting": {
     "normal_k": 10,
-    "distance_alpha": 1.0,
+    "distance_alpha": 0.0,
     "smooth_k": 10,
     "smooth_threshold": 0.5
   },
