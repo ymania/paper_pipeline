@@ -49,10 +49,26 @@ def main():
 
     unique_classes = np.unique(labels[valid])
     class_counts = {}
+    class_stats = {}  # per-class detailed stats
     for c in unique_classes:
         name = class_id_to_name.get(int(c), f'class_{c}')
-        count = (labels == c).sum()
+        mask = labels == c
+        count = mask.sum()
         class_counts[name] = int(count)
+
+        # Per-class metrics
+        cls_conf = confidences[mask] if mask.sum() > 0 else np.array([0])
+        cls_inst_mask = instance_ids[mask]
+        n_inst = len(set(cls_inst_mask[cls_inst_mask >= 0]))
+
+        class_stats[name] = {
+            'class_id': int(c),
+            'point_count': int(count),
+            'point_ratio_pct': round(float(count / n_total * 100), 2) if n_total > 0 else 0.0,
+            'mean_confidence': round(float(cls_conf.mean()), 4) if len(cls_conf) > 0 else 0.0,
+            'high_conf_ratio_pct': round(float((cls_conf > 0.5).sum() / len(cls_conf) * 100), 2) if len(cls_conf) > 0 else 0.0,
+            'num_instances': n_inst,
+        }
 
     # 排序
     class_counts_sorted = sorted(class_counts.items(), key=lambda x: x[1], reverse=True)
@@ -66,6 +82,7 @@ def main():
         'high_confidence_ratio': float((confidences[valid] > 0.5).sum() / n_valid * 100) if n_valid > 0 else 0.0,
         'num_instances': len(instances),
         'class_distribution': dict(class_counts_sorted[:20]),
+        'per_class_stats': class_stats,
         'point_cloud_range': {
             'x': [float(points[:, 0].min()), float(points[:, 0].max())],
             'y': [float(points[:, 1].min()), float(points[:, 1].max())],
@@ -90,7 +107,10 @@ def main():
     logger.info("=" * 50)
     logger.info("Top-10 类别:")
     for name, count in class_counts_sorted[:10]:
-        logger.info(f"  {name:20s} {count:8,d}")
+        cs = class_stats.get(name, {})
+        n_inst = cs.get('num_instances', 0)
+        conf = cs.get('mean_confidence', 0)
+        logger.info(f"  {name:20s} {count:8,d} 点  |  {n_inst:3d} 实例  |  置信度 {conf:.3f}")
 
     # 生成 HTML 可视化 (Plotly)
     html = generate_plotly_html(points, labels, colors_rgb, class_id_to_name, instances)

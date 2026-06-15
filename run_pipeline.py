@@ -34,6 +34,7 @@ STEPS = [
     ("5_instance_cluster.py",  "DBSCAN 实例分割 + OBB ★",   "§3.5"),
     ("6_export_ifc.py",        "IFC4 模型导出 ★",           "§3.6"),
     ("7_visualize.py",         "可视化与统计",               "附录"),
+    ("8_evaluate.py",          "Per-Class 评估指标 ★",      "§4.7"),
 ]
 
 

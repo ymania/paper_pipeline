@@ -15,6 +15,7 @@ import numpy as np
 import logging
 from typing import Dict, List, Tuple, Optional
 from sklearn.cluster import DBSCAN
+from sklearn.neighbors import LocalOutlierFactor
 from dataclasses import dataclass
 
 logger = logging.getLogger(__name__)
@@ -92,6 +93,94 @@ def compute_obb(points: np.ndarray) -> OBB:
         axes=axes,
         half_extents=half_extents
     )
+
+
+def filter_outliers_lof(
+    points: np.ndarray,
+    n_neighbors: int = 20,
+    contamination: float = 0.1
+) -> Tuple[np.ndarray, np.ndarray, int]:
+    """
+    LOF 离群点预过滤 — 在 DBSCAN 之前剔除显著离群点 (§3.5.1 改进)
+
+    参考: 张曾一 (2025) §3.5, 使用局部离群因子降低噪声对聚类干扰
+
+    参数:
+        points:       (N, 3) 点云
+        n_neighbors:  LOF 邻域大小 (默认 20)
+        contamination: 预期离群比例 (默认 0.1 = 10%)
+
+    返回:
+        filtered_points:  (M, 3) 过滤后的点云
+        inlier_mask:      (N,) bool 内点掩码
+        n_removed:        被剔除的离群点数
+    """
+    if len(points) < n_neighbors:
+        logger.warning(f"点数 ({len(points)}) < n_neighbors ({n_neighbors})，跳过 LOF")
+        return points, np.ones(len(points), dtype=bool), 0
+
+    lof = LocalOutlierFactor(
+        n_neighbors=n_neighbors,
+        contamination=contamination,
+        novelty=False
+    )
+    outlier_labels = lof.fit_predict(points)
+    inlier_mask = outlier_labels == 1
+    n_removed = (~inlier_mask).sum()
+
+    logger.info(
+        f"LOF 离群过滤: {n_removed}/{len(points)} 点剔除 "
+        f"({n_removed/len(points)*100:.1f}%), "
+        f"剩余 {inlier_mask.sum()} 点"
+    )
+
+    return points[inlier_mask], inlier_mask, n_removed
+
+
+def align_to_principal_axes(points: np.ndarray) -> Tuple[np.ndarray, np.ndarray]:
+    """
+    PCA 主方向对齐 — 将点云旋转到主轴对齐坐标系 (§3.5.1 改进)
+
+    参考: 张曾一 (2025) §3.3, 桥梁主方向校准;
+    葛健 (2024) §4.3.2, OBB 主轴提取
+
+    使点云的主轴对齐到世界坐标轴 (X, Y, Z)，
+    便于后续 DBSCAN 的 eps 参数调优和 OBB 尺寸计算。
+
+    参数:
+        points: (N, 3) 原始点云
+
+    返回:
+        aligned_points: (N, 3) 对齐后的点云
+        rotation:       (3, 3) 旋转矩阵 R (aligned = points @ R)
+    """
+    if len(points) < 3:
+        return points.copy(), np.eye(3)
+
+    # PCA → 主轴方向
+    centered = points - points.mean(axis=0)
+    cov = np.cov(centered.T)
+    eigenvalues, eigenvectors = np.linalg.eigh(cov)
+
+    # 按特征值降序: 主轴 → 次轴 → 辅轴
+    order = np.argsort(eigenvalues)[::-1]
+    axes = eigenvectors[:, order]  # (3, 3) 列向量为主轴
+
+    # 确保右手坐标系
+    if np.linalg.det(axes) < 0:
+        axes[:, -1] *= -1
+
+    # 对齐: 将主轴旋转到世界坐标轴
+    # aligned = centered @ axes → axes 的列就是新的基
+    aligned = centered @ axes
+
+    logger.info(
+        f"主方向对齐完成: "
+        f"特征值比值 λ1:λ2:λ3 = "
+        f"{eigenvalues[order][0]:.2f}:{eigenvalues[order][1]:.2f}:{eigenvalues[order][2]:.2f}"
+    )
+
+    return aligned, axes
 
 
 def cluster_semantic_points(
