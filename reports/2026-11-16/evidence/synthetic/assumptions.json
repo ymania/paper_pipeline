@@ -1,0 +1,81 @@
+{
+  "purpose": "SYNTHETIC_ONLY_MECHANISM_TEST_NOT_REAL_PERFORMANCE",
+  "unit": "hypothetical coordinate unit, not measured meters",
+  "geometry": {
+    "plane_size": [
+      12,
+      8
+    ],
+    "grid": [
+      60,
+      40
+    ],
+    "windows": 6,
+    "window_size": [
+      1.4,
+      2.0
+    ],
+    "cameras": 5,
+    "opaque_panels": 2
+  },
+  "seeds": [
+    20261111,
+    20261112,
+    20261113,
+    20261114,
+    20261115,
+    20261116,
+    20261117,
+    20261118,
+    20261119,
+    20261120,
+    20261121,
+    20261122,
+    20261123,
+    20261124,
+    20261125,
+    20261126,
+    20261127,
+    20261128,
+    20261129,
+    20261130
+  ],
+  "regimes": [
+    [
+      "independent_errors",
+      0.0,
+      0.05
+    ],
+    [
+      "shared_window_error",
+      1.0,
+      0.05
+    ],
+    [
+      "unreliable_visibility",
+      0.0,
+      0.35
+    ]
+  ],
+  "visible_window_flip": 0.25,
+  "visible_wall_flip": 0.1,
+  "reject_consensus": 0.75,
+  "minimum_accepted_views": 2,
+  "class_ids": {
+    "wall": 0,
+    "window": 8,
+    "occluder": 150,
+    "abstain": -1
+  },
+  "metrics": "macro IoU fixed GT classes wall/window; abstain counts FN; coverage all points; retained accuracy only accepted points; SD across noise seeds is not uncertainty over buildings",
+  "limits": [
+    "No image formation or learned model inference",
+    "Analytic visibility is simulated; noisy visibility is artificial, not an implemented depth estimator",
+    "Normals and correspondences exact; no camera noise",
+    "Only one synthetic geometry, 20 seeds are NOT 20 buildings",
+    "Oracle uses synthetic hidden truth and cannot be deployed",
+    "Parameters are illustrative assumptions, not estimates from real data",
+    "Threshold fixed before runs, no tuning or held-out generalization claim",
+    "Plane grid is a triangle surface, not complete building or wall with physical window openings"
+  ]
+}

@@ -1,0 +1,1 @@
+Upload snapshot: Python sources parse successfully; association replay on frozen detections reproduced all 3 groups and accepted edges exactly. Detection adaptation only adds an image-directory CLI parameter; no additional inference or independent accuracy evaluation claimed.

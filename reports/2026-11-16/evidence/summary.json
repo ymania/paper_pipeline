@@ -1,0 +1,36 @@
+{
+  "images": 11,
+  "candidates": 26,
+  "groups": [
+    {
+      "group_id": 0,
+      "views": 11,
+      "status": "multi_view_candidate",
+      "score_range": [
+        0.6166910529136658,
+        0.8202697038650513
+      ]
+    },
+    {
+      "group_id": 1,
+      "views": 11,
+      "status": "multi_view_candidate",
+      "score_range": [
+        0.407371461391449,
+        0.7720277905464172
+      ]
+    },
+    {
+      "group_id": 2,
+      "views": 4,
+      "status": "multi_view_candidate",
+      "score_range": [
+        0.31808236241340637,
+        0.343249648809433
+      ]
+    }
+  ],
+  "inference_and_postprocess_seconds": 6.99377665999873,
+  "independent_accuracy": null,
+  "depth_occlusion_tested": false
+}

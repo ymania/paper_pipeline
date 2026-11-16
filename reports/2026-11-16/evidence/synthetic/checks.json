@@ -1,0 +1,9 @@
+{
+  "finite_points": true,
+  "triangle_indices_valid": true,
+  "gt_window_points": 400,
+  "vertices": 2400,
+  "triangles": 4602,
+  "records": 360,
+  "shared_failure_all_window_iou_zero": true
+}

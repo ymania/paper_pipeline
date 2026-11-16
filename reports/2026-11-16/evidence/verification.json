@@ -1,0 +1,7 @@
+{
+  "finite_in_bounds_boxes": true,
+  "all_candidates_grouped_once": true,
+  "edge_thresholds_pass": true,
+  "one_detection_per_image_per_group": true,
+  "semantic_accuracy_verified": false
+}

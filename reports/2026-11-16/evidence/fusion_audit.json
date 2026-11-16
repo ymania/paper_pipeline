@@ -1,0 +1,22 @@
+{
+  "points": 3696,
+  "observations": 25335,
+  "input_hashes_verified": 28,
+  "duplicate_observations": 0,
+  "weighted_zero_mass_points": 0,
+  "weighted_tie_points": 0,
+  "replay_mismatches": {
+    "single": 0,
+    "majority": 0,
+    "weighted": 0
+  },
+  "prediction_coverage": {
+    "single": 1.0,
+    "majority": 1.0,
+    "weighted": 1.0
+  },
+  "single_rule": "lowest visible valid image ID per point; NOT one fixed global camera",
+  "weighted_rule": "alpha=0 beta=1 absolute normal-view cosine; no segmentation probability weighting",
+  "shared_rules": "same point rows, same track visibility, round pixels, same B5 cache, no GT-dependent filtering",
+  "limitation": "weighted implementation uses insertion-order tie and labels zero-weight points; replay uses smallest-label tie and abstains zero-mass. Counts above establish whether frozen run is affected."
+}

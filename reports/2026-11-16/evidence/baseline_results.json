@@ -1,0 +1,81 @@
+{
+  "anchor": "IMG_1123.JPG",
+  "selected_images": [
+    "IMG_1126.JPG",
+    "IMG_1124.JPG",
+    "IMG_1118.JPG",
+    "IMG_1123.JPG",
+    "IMG_1120.JPG",
+    "IMG_1122.JPG",
+    "IMG_1128.JPG",
+    "IMG_1127.JPG",
+    "IMG_1121.JPG",
+    "IMG_1119.JPG",
+    "IMG_1125.JPG"
+  ],
+  "roi_pixels": [
+    730.08,
+    187.20000000000002,
+    4998.24,
+    2620.7999999999997
+  ],
+  "points": 3696,
+  "parameters": {
+    "segmentation_cache": "B5",
+    "alpha": 0,
+    "beta": 1,
+    "eps": 0.5,
+    "min_samples": 10,
+    "lof": false,
+    "alignment": false,
+    "structural_constraints": false
+  },
+  "label_counts": {
+    "building": 3682,
+    "tree": 1,
+    "plant": 13
+  },
+  "instances": [
+    {
+      "id": 0,
+      "label": "building",
+      "points": 3680
+    }
+  ],
+  "obb_contains_points": true,
+  "duplicate_observations": 0,
+  "fusion_disagreements": {
+    "single_vs_majority": 9,
+    "majority_vs_weighted": 0
+  },
+  "review_boxes_not_ground_truth": {
+    "left_review_box": {
+      "points": 99,
+      "labels": {
+        "building": 99
+      },
+      "instance_ids": {
+        "0": 99
+      }
+    },
+    "right_review_box": {
+      "points": 60,
+      "labels": {
+        "building": 60
+      },
+      "instance_ids": {
+        "0": 60
+      }
+    }
+  },
+  "elapsed_seconds": 5.429711672999929,
+  "limitations": [
+    "ROI is anchor-visible sparse points, not complete facade",
+    "11 views only; not full-scene result",
+    "Scale unknown; eps in reconstruction units",
+    "Cached B5 provenance not fully reconstructable; frozen hashes, no new inference",
+    "Normal cache reused after point identity check; normal quality not validated",
+    "Review boxes are assistant-selected diagnostic regions, NOT ground truth",
+    "No IFC or relationship recovery in this diagnostic run"
+  ]
+}

@@ -42,3 +42,7 @@ python run_pipeline.py
 - Python 3.9+
 - CPU 可运行（i7-12700H 测试通过）
 - 全开源工具链（COLMAP / SegFormer / scikit-learn / IfcOpenShell）
+
+## 2026-11-16 阶段成果汇报
+
+[10页PPT、逐页讲稿、真实结果与合成实验说明](reports/2026-11-16/README.md)。该快照明确区分已运行功能与尚未验证结果，原有流水线不因此视为完成独立评价。
